@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 
+import sys
 import telegrambot as bot
 
-TOKENFILE = '/data/aramilbot/token'
+TOKENFILE = sys.argv[1] 
 
 f = open(TOKENFILE, 'r')
 token = f.readline()
@@ -12,4 +13,6 @@ if token:
     print token
     b = bot.bot(token.rstrip())
 
-    print b.getme()	
+    for ret in b.get_next_message():
+	print ret 
+

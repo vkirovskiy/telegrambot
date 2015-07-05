@@ -1,19 +1,61 @@
 import requests
+import json
 
 class bot:
     btoken = ""
     url = 'https://api.telegram.org/bot'
+    lastupdate = 0
+    lastupdatepath = 'lastupdate'
 
     def __init__(self, token):
         self.btoken = token
+	self.lastupdate = self.get_last_update()
+	print "Last update:", self.lastupdate
 
-    def send_data(self, api_cmd, data = ""):
-	r = requests.post(self.url + self.btoken + api_cmd, data = data)
+    def get_last_update(self):
+	f = open(self.lastupdatepath, 'r')
+	update_id = f.readline().rstrip()
+	f.close()
+	if update_id:
+	    return int(update_id)
+    	else:
+	    return 0
+
+    def store_last_update(self, update_id):
+	if update_id:
+	    f = open(self.lastupdatepath, 'w')
+	    f.write(str(update_id))
+	    f.close()
+	    return True
+    	else:
+	    return False
+
+    def send_data(self, api_cmd, postdata = "", getdata = ""):
+	if postdata:
+	    r = requests.post(self.url + self.btoken + api_cmd, data = json.dumps(postdata))
+	elif getdata:
+	    r = requests.get(self.url + self.btoken + api_cmd + getdata)
+	
+	print "Postata: ", postdata
+	print "Getdata: ", getdata
+	r = requests.post(self.url + self.btoken + api_cmd, data = postdata)
 	if r.status_code == 200:
-	    return r.content
+	    r.encoding = 'utf8'
+	    return r.json()
         return False 
 
-    def getme(self):
+    def getMe(self):
 	return self.send_data('/getMe')
-    	
-    
+
+    def getUpdates(self, limit=10):
+	getdata = "?offset=" + str(self.lastupdate + 1)
+	json_ret = self.send_data('/getUpdates', getdata = getdata )
+
+   	return json_ret 
+
+    def get_next_message(self): 
+	json_ret = self.getUpdates()
+	for message in json_ret['result']:
+	    self.store_last_update(message['update_id'])
+	    yield message
+
