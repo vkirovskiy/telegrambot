@@ -4,7 +4,7 @@ from datetime import datetime
 tpath = '/data/var/www/temp/temp'
 
 def dstemp_get():
-    d = datetime.datetime.now()
+    d = datetime.now()
     dt = d.strftime("%Y%m%d")
 
     line = subprocess.check_output(['tail', '-1', "%s/dstemp-%s.csv" % (tpath, dt)])
