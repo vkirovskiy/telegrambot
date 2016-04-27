@@ -23,6 +23,7 @@ class bot:
 
     def store_last_update(self, update_id):
 	if update_id:
+            self.lastupdate = update_id 
 	    f = open(self.lastupdatepath, 'w')
 	    f.write(str(update_id))
 	    f.close()
@@ -32,17 +33,18 @@ class bot:
 
     def send_data(self, api_cmd, postdata = "", getdata = ""):
 	if postdata:
-	    r = requests.post(self.url + self.btoken + api_cmd, data = json.dumps(postdata))
+            headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
+	    r = requests.post(self.url + self.btoken + api_cmd, data = json.dumps(postdata), headers = headers)
 	elif getdata:
 	    r = requests.get(self.url + self.btoken + api_cmd + getdata)
 	
 	print "Postata: ", postdata
 	print "Getdata: ", getdata
-	r = requests.post(self.url + self.btoken + api_cmd, data = postdata)
+	#r = requests.post(self.url + self.btoken + api_cmd, data = postdata)
 	if r.status_code == 200:
 	    r.encoding = 'utf8'
-	    return r.json()
-        return False 
+	    
+        return r.json() 
 
     def getMe(self):
 	return self.send_data('/getMe')
@@ -52,6 +54,12 @@ class bot:
 	json_ret = self.send_data('/getUpdates', getdata = getdata )
 
    	return json_ret 
+    
+    def send_answer(self, userid, msg):
+        postdata = {'chat_id': userid, 'text': msg}
+        json_ret = self.send_data('/sendMessage', postdata = postdata)
+    
+        return json_ret
 
     def get_next_message(self): 
 	json_ret = self.getUpdates()
