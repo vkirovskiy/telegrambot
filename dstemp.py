@@ -1,19 +1,20 @@
 import subprocess
 from datetime import datetime
 
-tpath = '/data/var/www/temp/temp'
+class dstemp:
 
-def dstemp_get():
-    d = datetime.now()
-    dt = d.strftime("%Y%m%d")
+    def __init__(s):
+        s.path = '/data/var/www/temp/temp'
 
-    line = subprocess.check_output(['tail', '-1', "%s/dstemp-%s.csv" % (tpath, dt)])
+    def dstemp_get(s):
+        d = datetime.now()
+        dt = d.strftime("%Y%m%d")
 
-    l = line.split(",")
+        line = subprocess.check_output(['tail', '-1', "%s/dstemp-%s.csv" % (s.path, dt)])
 
-    print l
-    
-    return "Time: %s, temperature: %s C" % (l[0].split(" ")[1], l[2].strip())
+        l = line.split(",")
+
+        return "Time: %s, temperature: %s C" % (l[0].split(" ")[1], l[2].strip())
         
 
         
