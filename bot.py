@@ -3,7 +3,6 @@
 import sys
 import time
 import telegrambot as bot
-from dstemp import dstemp
 from chat import chat
 
 TOKENFILE = sys.argv[1] 
@@ -12,25 +11,29 @@ f = open(TOKENFILE, 'r')
 token = f.readline()
 f.close()
 
+
+def debug(msg):
+    print "Debug -- "
+    print msg
+
 if token:
     print token
     b = bot.bot(token.rstrip())
-    c = chat()
-    d = dstemp()
+    c = chat(b)
 
     while True:
         print "Processing..."
 
         for ret in b.get_next_message():
+            print ret
+
             msg = ret['message'] 
-            if msg['chat']:
-                txt = msg['text']
+            
+            ret = c.process(msg)
+    
+            if ret:
+               b.send_answer(ret[0], ret[1]) 
 
-                c.save_chat(msg)
-
-                if txt == '/temp':
-                    chatid = msg['chat']['id']
-                    print b.send_answer(chatid, d.dstemp_get())
 
         time.sleep(10)
             

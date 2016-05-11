@@ -14,7 +14,10 @@ class dstemp:
 
         l = line.split(",")
 
-        return "Time: %s, temperature: %s C" % (l[0].split(" ")[1], l[2].strip())
+        if len(l[2].strip()) > 0:
+            return "Time: %s, temperature: %s C" % (l[0].split(" ")[1], l[2].strip())
+        else:
+            return "I don't know, sorry :( Ask please a bit later..."
         
 
         
