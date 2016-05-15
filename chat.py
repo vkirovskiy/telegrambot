@@ -14,14 +14,13 @@ class chat:
         s.bot = bot
         s.d = dstemp()
 
-    def save_chat(s, json):
+    def save_chat(s, user, text):
 
         d = datetime.now()
         ddate = d.strftime("%Y%m%d %H:%M")
         print "Save chat"
-        print json
         f = open(s.path, 'a')
-        f.write(ddate + "\t" + json['from']['username'] + "\t" + json['text'] + "\n")
+        f.write(ddate + "\t" + user + "\t" + text + "\n")
         f.close()
 
     def process(s, json):
@@ -29,10 +28,10 @@ class chat:
             username = json['chat']['username']
             chatid = json['chat']['id']
 
-            if 'txt' in json: 
+            if 'text' in json: 
                 txt = json['text']
 
-                s.save_chat(json)
+                s.save_chat(username, txt)
 
                 if txt == '/temp':
                     return (chatid, s.d.dstemp_get())        
@@ -51,6 +50,7 @@ class chat:
                     shutil.move(fpath, newname)
                     os.chmod(newname, 0644)
 
+                    s.save_chat(username, 'Picture ' + newname)
                     return (chatid, s.fileurl + '/' + os.path.basename(newname)) 
                 else:
                     return (chatid, 'Can not download a file')

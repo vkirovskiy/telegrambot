@@ -2,6 +2,73 @@ import requests
 import json
 import tempfile
 import os
+from BaseHTTPServer import BaseHTTPRequestHandler
+from BaseHTTPServer import HTTPServer
+import cgi
+from chat import chat
+
+
+class PostHandlerCls(BaseHTTPRequestHandler):
+
+    bot = ''
+
+    def do_GET(self):
+        s.send_response(200)
+        s.end_headers()
+        s.wfile.write('OK')
+
+    def do_POST(self):
+
+        #chat = chat(s.bot)
+
+        #msg = ret['message']
+
+        #ret = c.process(msg)
+
+        #if ret:
+        #   b.send_answer(ret[0], ret[1])
+
+        self.send_response(200)
+        self.end_headers()
+
+        print "Income form: "
+
+        print self.headers
+        ctype, pdict = cgi.parse_header(self.headers['content-type'])
+        length = int(self.headers['content-length'])
+
+        if ctype == 'application/json':
+            postvars = json.loads(self.rfile.read(length))
+            c = chat(self.bot)
+            msg = postvars['message']
+            ret = c.process(msg)
+             
+            if ret:
+                self.bot.send_answer(ret[0], ret[1])
+
+        print postvars
+
+        return
+
+    def setbot(s, bot):
+        s.bot = bot
+
+class httpserver:
+    def __init__(s, addr, port, token, ssl_public_cert, webhook_url):
+
+        b = bot(token)
+
+        if b.setWebhook(webhook_url, ssl_public_cert):
+
+            print "Web hook was set"
+
+            PostHandler = PostHandlerCls
+            PostHandler.bot = b 
+
+            server = HTTPServer((addr, port), PostHandler)
+
+            print 'Starting server, use <Ctrl-C> to stop'
+            server.serve_forever()
 
 class bot:
     btoken = ""
@@ -13,6 +80,18 @@ class bot:
         self.btoken = token
 	self.lastupdate = self.get_last_update()
 	print "Last update:", self.lastupdate
+
+    def setWebhook(self, url, cert):
+        postdata = {'url': url}
+        files = {'certificate': ('bot-public.key', open(cert, 'rb'), 'application/data', {'Expires': '0'})}
+        print postdata
+        r = requests.post(self.url + '/bot' + self.btoken + '/setWebhook', data = postdata, files = files )
+
+        if r.json()['result'] == True:
+            print r.json()
+            return True
+        else:
+            return False 
 
     def get_last_update(self):
 	f = open(self.lastupdatepath, 'r')
@@ -82,7 +161,12 @@ class bot:
 
     def get_next_message(self): 
 	json_ret = self.getUpdates()
-	for message in json_ret['result']:
-	    self.store_last_update(message['update_id'])
-	    yield message
+
+        if 'result' in json_ret:
+	    for message in json_ret['result']:
+	        self.store_last_update(message['update_id'])
+	        yield message
+        else:
+            print "get_next_message Error"
+            print json_ret 
 

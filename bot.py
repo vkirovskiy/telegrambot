@@ -5,7 +5,13 @@ import time
 import telegrambot as bot
 from chat import chat
 
+if len(sys.argv) < 4:
+    print "Usage: python ./bot.py token_file ssl_public_cert webhook_url"
+    sys.exit(1)
+
 TOKENFILE = sys.argv[1] 
+ssl_public_cert = sys.argv[2]
+webhook_url = sys.argv[3]
 
 f = open(TOKENFILE, 'r')
 token = f.readline()
@@ -18,23 +24,5 @@ def debug(msg):
 
 if token:
     print token
-    b = bot.bot(token.rstrip())
-    c = chat(b)
-
-    while True:
-        print "Processing..."
-
-        for ret in b.get_next_message():
-            print ret
-
-            msg = ret['message'] 
-            
-            ret = c.process(msg)
-    
-            if ret:
-               b.send_answer(ret[0], ret[1]) 
-
-
-        time.sleep(10)
-            
+    s = bot.httpserver('127.0.0.1', 9090, token.rstrip(), ssl_public_cert, webhook_url)
 
