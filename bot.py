@@ -4,14 +4,18 @@ import sys
 import time
 import telegrambot as bot
 from chat import chat
+import argparse
 
-if len(sys.argv) < 4:
-    print "Usage: python ./bot.py token_file ssl_public_cert webhook_url"
-    sys.exit(1)
+parser = argparse.ArgumentParser(description='Telegram bot')
+parser.add_argument('--tokenfile', help='Token file', required=True)
+parser.add_argument('--sslcert', help='Public cert for telegram webhook', required=True)
+parser.add_argument('--whookurl', help='Webhook url', required=True)
 
-TOKENFILE = sys.argv[1] 
-ssl_public_cert = sys.argv[2]
-webhook_url = sys.argv[3]
+args = parser.parse_args()
+
+TOKENFILE = args.tokenfile 
+ssl_public_cert = args.sslcert
+webhook_url = args.whookurl
 
 f = open(TOKENFILE, 'r')
 token = f.readline()
