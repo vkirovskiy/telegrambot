@@ -2,6 +2,7 @@ import os
 from datetime import datetime
 from dstemp import dstemp
 import telegrambot as bot
+import udpcamera as camera
 import shutil
 
 class chat:
@@ -35,6 +36,16 @@ class chat:
 
                 if txt == '/temp':
                     return (chatid, s.d.dstemp_get())        
+
+                if txt == '/cam':
+                    cam = camera.camera()
+                    (st, f) = cam.get_oneshot()
+
+                    if st == 'OK':
+                        s.bot.sendPhoto(chatid, f)
+                        return None 
+
+                    return (chatid, st)
             
             if 'photo' in json:
                 p = json['photo'][len(json['photo'])-1]

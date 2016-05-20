@@ -79,18 +79,18 @@ class bot:
     def __init__(self, token):
         self.btoken = token
 	self.lastupdate = self.get_last_update()
-	print "Last update:", self.lastupdate
+	# print "Last update:", self.lastupdate
 
     def setWebhook(self, url, cert):
         postdata = {'url': url}
         files = {'certificate': ('bot-public.key', open(cert, 'rb'), 'application/data', {'Expires': '0'})}
-        print postdata
+       # print postdata
         r = requests.post(self.url + '/bot' + self.btoken + '/setWebhook', data = postdata, files = files )
 
         if r.json()['result'] == True:
-            print r.json()
             return True
         else:
+            print r.json()
             return False 
 
     def get_last_update(self):
@@ -119,13 +119,27 @@ class bot:
 	elif getdata:
 	    r = requests.get(self.url + '/bot' + self.btoken + api_cmd + getdata)
 	
-	print "Postata: ", postdata
-	print "Getdata: ", getdata
-	#r = requests.post(self.url + self.btoken + api_cmd, data = postdata)
+	#print "Postata: ", postdata
+	#print "Getdata: ", getdata
 	if r.status_code == 200:
 	    r.encoding = 'utf8'
 	    
         return r.json() 
+
+    def sendPhoto(self, username, filename):
+        postdata = {'chat_id': username}
+        files = {'photo': open(filename, 'rb')}
+
+        r = requests.post(self.url + '/bot' + self.btoken + '/sendPhoto', data = postdata, files = files )
+
+        #print postdata
+        #print r.text
+        if r.json()['result'] == True:
+            return True
+        else:
+            print r.json()
+            return False
+        
 
     def getMe(self):
 	return self.send_data('/getMe')
