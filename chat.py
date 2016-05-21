@@ -9,6 +9,7 @@ class chat:
 
     rootdir = '/data/aramilbot/files'
     fileurl = 'http://files.uranstation.ru'
+    usbcamera = ('192.168.2.7', 4444)
 
     def __init__(s, bot):
         s.path = os.path.dirname(os.path.abspath(__file__)) + '/chat.txt'
@@ -38,7 +39,7 @@ class chat:
                     return (chatid, s.d.dstemp_get())        
 
                 if txt == '/cam':
-                    cam = camera.camera()
+                    cam = camera.camera(s.usbcamera[0], s.usbcamera[1])
                     (st, f) = cam.get_oneshot()
 
                     if st == 'OK':
