@@ -19,7 +19,7 @@ class camera:
     def get_oneshot(s):
         def run():
             print "Thread started"
-            s.proc = subprocess.Popen("gst-launch-0.10 tcpclientsrc host=%s port=%s num-buffers=200 ! filesink location=%s" % (s.host, s.port, s.outfile), shell=True)
+            s.proc = subprocess.Popen("gst-launch-0.10 tcpclientsrc host=%s port=%s num_buffers=200 ! filesink location=%s" % (s.host, s.port, s.outfile), shell=True)
         
             print "Thread finished"
 
@@ -36,11 +36,6 @@ class camera:
 
         if os.path.isfile(s.outfile):
             r = s.proc.returncode
-            if r == 0:
-                return ("OK", s.outfile)
-            elif r == -15:
-                return ("Camera is offline",'')
-            else:
-                return ("Error " + str(r), '')
+            return (r, s.outfile)
         else:
-            return "Error"
+            return (-1, s.outfile)

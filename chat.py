@@ -42,9 +42,13 @@ class chat:
                     cam = camera.camera(s.usbcamera[0], s.usbcamera[1])
                     (st, f) = cam.get_oneshot()
 
-                    if st == 'OK':
+                    if st == 0:
                         s.bot.sendPhoto(chatid, f)
                         return None 
+                    elif st == -15:
+                        return (chatid, 'Timeout to connect')
+                    elif st == 255:
+                        return (chatid, 'Camera is offline')
 
                     return (chatid, st)
             
