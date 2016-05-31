@@ -54,9 +54,9 @@ class PostHandlerCls(BaseHTTPRequestHandler):
         s.bot = bot
 
 class httpserver:
-    def __init__(s, addr, port, token, ssl_public_cert, webhook_url):
+    def __init__(s, addr, port, bot, ssl_public_cert, webhook_url):
 
-        b = bot(token)
+        b = bot
 
         if b.setWebhook(webhook_url, ssl_public_cert):
 
@@ -81,11 +81,17 @@ class bot:
 	self.lastupdate = self.get_last_update()
 	# print "Last update:", self.lastupdate
 
+    def resetWebhook(self):
+        return self.setWebhook('', '')
+
     def setWebhook(self, url, cert):
         postdata = {'url': url}
-        files = {'certificate': ('bot-public.key', open(cert, 'rb'), 'application/data', {'Expires': '0'})}
-       # print postdata
-        r = requests.post(self.url + '/bot' + self.btoken + '/setWebhook', data = postdata, files = files )
+
+        if cert and url:
+            files = {'certificate': ('bot-public.key', open(cert, 'rb'), 'application/data', {'Expires': '0'})}
+            r = requests.post(self.url + '/bot' + self.btoken + '/setWebhook', data = postdata, files = files )
+        else:
+            r = requests.post(self.url + '/bot' + self.btoken + '/setWebhook', data = postdata )
 
         if r.json()['result'] == True:
             return True
