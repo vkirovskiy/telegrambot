@@ -1,3 +1,15 @@
 = Usage =
 
-usage: bot.py [-h] --tokenfile TOKENFILE --sslcert SSLCERT --whookurl WHOOKURL
+# python ./bot.py -h
+usage: bot.py [-h] --tokenfile TOKENFILE [--sslcert SSLCERT]
+              [--whookurl WHOOKURL] [-w]
+
+Telegram bot
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --tokenfile TOKENFILE
+                        Token file
+  --sslcert SSLCERT     Public cert for telegram webhook
+  --whookurl WHOOKURL   Webhook url
+  -w                    Use webhook
