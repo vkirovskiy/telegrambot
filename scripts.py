@@ -17,9 +17,11 @@ class scripts:
     def execute(s, cmdline):
         def run():
             print "Thread started"
+
+            fname = s.spath + '/' + cmdline + '.sh'
             
-            if os.path.exists(s.spath + '/' + cmdline):
-                s.proc = Popen(s.spath + '/' + cmdline, shell=True, stderr=STDOUT, stdout=PIPE)
+            if os.path.exists(fname):
+                s.proc = Popen(fname, shell=True, stderr=STDOUT, stdout=PIPE)
             else:
                 print "No such file"
 

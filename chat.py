@@ -58,7 +58,7 @@ class chat:
 
                 elif match('^/cmd', txt):
                     if username == s.bot.adminuser: 
-                        m = split('^(/cmd)[ ]+([a-zA-Z0-9\. ]+)', txt)
+                        m = split('^(/cmd)[ ]+([a-zA-Z0-9]+)', txt)
                         cmdline = m[2]
                         
                         if cmdline:
