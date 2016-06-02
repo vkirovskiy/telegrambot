@@ -75,10 +75,12 @@ class bot:
     url = 'https://api.telegram.org'
     lastupdate = 0
     lastupdatepath = 'lastupdate'
+    adminuser = ''
 
-    def __init__(self, token):
+    def __init__(self, token, admin):
         self.btoken = token
 	self.lastupdate = self.get_last_update()
+        self.adminuser = admin
 	# print "Last update:", self.lastupdate
 
     def resetWebhook(self):

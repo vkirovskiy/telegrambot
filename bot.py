@@ -11,12 +11,18 @@ parser.add_argument('--tokenfile', help='Token file', required=True)
 parser.add_argument('--sslcert', help='Public cert for telegram webhook')
 parser.add_argument('--whookurl', help='Webhook url')
 parser.add_argument('-w', help='Use webhook', action='store_const', const=1)
+parser.add_argument('-a', help='Admin username')
 
 args = parser.parse_args()
 
 TOKENFILE = args.tokenfile 
 ssl_public_cert = args.sslcert
 webhook_url = args.whookurl
+
+if args.a:
+    adminuser = args.a
+else:
+    adminuser = ''
 
 f = open(TOKENFILE, 'r')
 token = f.readline().rstrip()
@@ -30,11 +36,10 @@ def debug(msg):
 if token:
     print token
     
-    tbot = bot.bot(token)
+    tbot = bot.bot(token, adminuser)
 
     if args.w and ssl_public_cert and webhook_url:
         print "Webhook mode enabled"
-        tbot = bot.bot(token)
         s = bot.httpserver('127.0.0.1', 9090, tbot, ssl_public_cert, webhook_url)
     else:
         print "Webhook mode disabled"
